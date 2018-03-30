@@ -1,0 +1,33 @@
+﻿define(['index'], function (app) {
+
+    'use strict';
+
+    app.service('@{@Model.LBusinessName.Replace("Comb", "")}.list.service', ['ajaxService', 'constants', 'helper', function (ajaxService, constants, helper) {
+        @foreach (var methodDescriptor in @Model.MethodDescriptorList)
+        {
+        @:/**
+        @:* 
+        @:* 
+        if(methodDescriptor.HasParameter)
+        {        @:* @@param {{any}} requestParam 请求参数
+}
+        @:* @@param {{any}} successCallback 成功回调
+        @:* @@param {{any}} failureCallback 失败回调
+        @:*/
+        @:this.@methodDescriptor.LMethodName = function (@if(methodDescriptor.HasParameter)
+																{<Text>requestParam, </Text>}successCallback, failureCallback)
+        @:{
+			if(methodDescriptor.HasParameter)
+			{            @:if (helper.isUndefOrNull(requestParam)) {
+            @:   requestParam = {};
+            @:}
+            }
+            @:return ajaxService.post(helper.teachingApiUrl + '@{@Model.LBusinessName.Replace("Comb", "")}/@{@methodDescriptor.LMethodName}', @if(methodDescriptor.HasParameter)
+                                                                                                                          {<Text>requestParam</Text>}
+                                                                                                                          else
+                                                                                                                          {<Text>null</Text>}, successCallback, failureCallback);
+        @:};
+		@:
+        }
+    }]);
+});

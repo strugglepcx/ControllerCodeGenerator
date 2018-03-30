@@ -1,0 +1,45 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using Edu.Cloud.Common.Common;
+using Edu.Cloud.Service.Attributes;
+using Ordinary.Model.Common;
+
+namespace Edu.Cloud.CloudTeachingApi.Controllers
+{
+    [Authority]
+    [RoutePrefix("@Model.BusinessName.Replace("Comb", "")")]
+    //[CheckPower(ApplicationCode.StartClass)]
+    public class @{@Model.BusinessName.Replace("Comb", "")}Controller : BasicApiController
+    {
+        private readonly I@{@Model.BusinessName} _@{@Model.LBusinessName};
+
+        public @{@Model.BusinessName.Replace("Comb", "")}Controller(I@{@Model.BusinessName} @{@Model.LBusinessName})
+        {
+            _@{@Model.LBusinessName} = @{@Model.LBusinessName};
+        }
+
+        @foreach (var methodDescriptor in @Model.MethodDescriptorList)
+        {
+        @:[Route("@methodDescriptor.MethodName"), HttpPost]
+        @:public ResponseResult @{@methodDescriptor.MethodName}(@if(methodDescriptor.HasParameter)
+																{<Text>@{@methodDescriptor.FirstParameterTypeName} request</Text>})
+        @:{
+			if(methodDescriptor.IsVoid)
+			{              @:_@{@Model.LBusinessName}.@{@methodDescriptor.MethodName}(@if(methodDescriptor.HasParameter)
+																						   {<Text>request</Text>});
+              @:return ResponseResultHelper.Success((object)string.Empty);
+			}
+			else
+			{              @:var result = _@{@Model.LBusinessName}.@{@methodDescriptor.MethodName}(@if(methodDescriptor.HasParameter)
+																									    {<Text>request</Text>});
+              @:return ResponseResultHelper.Success(result);
+			}
+        @:}
+		@:
+        }
+    }
+}
